@@ -7,6 +7,9 @@ import colorama as color
 def choice():
     inertialessUnitName = 'Безынерционное звено'
     aperiodicUnitName = 'Апериодическое звено'
+    integrUnitName = 'Интегрирующее звено'
+    idealdiffUnitName = 'Идеальное дифференцирующее звено'
+    realdiffUnitName = 'Реальное дифференцирующее звено'
 
     needNewChoice = True
 
@@ -14,7 +17,10 @@ def choice():
         print(color.Style.RESET_ALL)
         userInput = input('Введите номер команды: \n'
                       '1 - ' + inertialessUnitName + ';\n'
-                      '2 - ' + aperiodicUnitName + '.\n')
+                      '2 - ' + aperiodicUnitName + ';\n'
+                      '3 - ' + integrUnitName + ';\n'
+                      '4 - ' + idealdiffUnitName + ';\n'
+                      '5 - ' + realdiffUnitName + '.\n')
 
         if userInput.isdigit():
             needNewChoice = False
@@ -23,6 +29,12 @@ def choice():
                 name = 'Безынерционное звено'
             elif userInput == 2:
                 name = 'Апериодическое звено'
+            elif userInput == 3:
+                name = 'Интегрирующее звено'
+            elif userInput == 4:
+                name = 'Идеальное дифференцирующее звено'
+            elif userInput == 5:
+                name = 'Реальное дифференцирующее звено'
             else:
                 print(color.Fore.RED + '\n Недопустимое значение!')
                 needNewChoice = True
@@ -40,14 +52,26 @@ def getUnit(name):
         k = input('Пожалуйста, введите коэффициент "k": ')
         t = input('Пожалуйста, введите коэффициент "t": ')
 
-        if k.isdigit() and t.isdigit():
-            k = int(k)
-            t = int(t)
+        try:
+            k = float(k)
+            t = float(t)
             if name == 'Безынерционное звено':
                 unit = matlab.tf([k], [1])
             elif name == 'Апериодическое звено':
                 unit = matlab.tf([k], [t, 1])
-        else:
+            elif name == 'Интегрирующее звено':
+                if t == 0:
+                    unit = matlab.tf([k], [1, 0])
+                else:
+                    unit = matlab.tf([1], [t, 0])
+            elif name == 'Идеальное дифференцирующее звено':
+                if t == 0:
+                    unit = matlab.tf([k, 0], [1 / 100000, 1])
+                else:
+                    unit = matlab.tf([t, 0], [1 / 100000, 1])
+            elif name == 'Реальное дифференцирующее звено':
+                unit = matlab.tf([k, 0], [t, 1])
+        except:
             print(color.Fore.RED + '\n Пожалуйста, введите числовое значение!')
             needNewChoice = True
     return unit
@@ -75,5 +99,8 @@ graph(1, 'Переходная характеристика', y, x)
 [y, x] = matlab.impulse(unit, timeLine)
 graph(2, 'Импульсная характеристика', y, x)
 pyplot.show()
-
+matlab.bode(unit, dB=False)
+pyplot.plot()
+pyplot.xlabel('Частота, Гц')
+pyplot.show()
 
