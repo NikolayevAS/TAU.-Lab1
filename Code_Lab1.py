@@ -1,6 +1,6 @@
 import matplotlib.pyplot as pyplot
 import control.matlab as matlab
-import numpy as numpy
+import numpy as numpy1
 import math
 import colorama as color
 
@@ -39,7 +39,7 @@ def choice():
                 print(color.Fore.RED + '\n Недопустимое значение!')
                 needNewChoice = True
         else:
-            print( color.Fore.RED + '\n Пожалуйста, введите числовое значение!')
+            print(color.Fore.RED + '\n Пожалуйста, введите числовое значение!')
             needNewChoice = True
     return name
 
